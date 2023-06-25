@@ -7,6 +7,8 @@ package it.polito.tdp.crimes;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.crimes.model.Distanze;
+import it.polito.tdp.crimes.model.Distretto;
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +27,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
     private ComboBox<?> boxMese; // Value injected by FXMLLoader
@@ -47,7 +49,17 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
-
+    	int anno = this.boxAnno.getValue();
+    	if (anno>=2014 && anno<=2017) {
+    		model.creaGrafo(anno);
+    		this.txtResult.appendText("Creato grafo con "+model.getGrafo().vertexSet().size()+" vertici e "+model.getGrafo().edgeSet().size()+" archi.\n");
+    		for (Distretto d : this.model.getGrafo().vertexSet()) {
+    			this.txtResult.appendText("\n"+d.toString()+":\n");
+    			for(Distanze di : d.getSortedList()) {
+    				this.txtResult.appendText(di.toString()+"\n");
+    			}
+    		}
+    	}
     }
 
     @FXML
@@ -64,10 +76,13 @@ public class FXMLController {
         assert btnSimula != null : "fx:id=\"btnSimula\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtN != null : "fx:id=\"txtN\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
-
     }
     
     public void setModel(Model model) {
     	this.model = model;
+    }
+    
+    public void setCombo() {
+    	this.boxAnno.getItems().addAll(model.setCombo());
     }
 }
